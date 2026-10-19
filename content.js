@@ -139,18 +139,35 @@
     return svg;
   }
 
+  function forwardTooltipText() {
+    return document.documentElement.lang.toLowerCase().startsWith("zh")
+      ? "前进 2 秒"
+      : "Skip forward 2 seconds";
+  }
+
   function addForwardButton(rewindButton) {
     const parent = rewindButton.parentElement;
-    if (!parent || parent.querySelector(':scope > [data-spotify-custom-forward="true"]')) return;
+    const tooltip = forwardTooltipText();
+    const existing = parent?.querySelector(':scope > [data-spotify-custom-forward="true"]');
+    if (existing) {
+      existing.setAttribute("aria-label", tooltip);
+      existing.setAttribute("title", tooltip);
+      return;
+    }
+    if (!parent) return;
 
     // Copy Spotify's button classes and attributes for consistent layout and
-    // hover/focus styling, then replace its contents and semantics.
+    // hover/focus styling, but discard tooltip references inherited from the
+    // original 15-second rewind control.
     const forwardButton = rewindButton.cloneNode(false);
     forwardButton.removeAttribute("id");
     forwardButton.removeAttribute("data-testid");
+    forwardButton.removeAttribute("aria-describedby");
+    forwardButton.removeAttribute("data-tooltip-id");
+    forwardButton.removeAttribute("data-tooltip-content");
     forwardButton.dataset.spotifyCustomForward = "true";
-    forwardButton.setAttribute("aria-label", "Forward 2 seconds");
-    forwardButton.setAttribute("title", "Forward 2 seconds");
+    forwardButton.setAttribute("aria-label", tooltip);
+    forwardButton.setAttribute("title", tooltip);
     forwardButton.append(makeForwardIcon());
     rewindButton.insertAdjacentElement("afterend", forwardButton);
   }
