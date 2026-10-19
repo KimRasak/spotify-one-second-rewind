@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Spotify 1-Second Rewind",
+  "description": "Changes Spotify Web Player's rewind control from 15 seconds to 1 second.",
+  "version": "1.0.0",
+  "content_scripts": [
+    {
+      "matches": ["https://open.spotify.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
